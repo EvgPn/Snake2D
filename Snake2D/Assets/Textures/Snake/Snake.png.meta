@@ -41,6 +41,9 @@ TextureImporter:
   - first:
       213: 192149001610987661
     second: Snake_8
+  - first:
+      213: 7081152572045472446
+    second: Snake_0
   externalObjects: {}
   serializedVersion: 10
   mipmaps:

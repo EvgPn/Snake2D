@@ -10,6 +10,8 @@ public class SnakeMoveScript : MonoBehaviour
 	private Vector3 _rightDirection = new Vector3(1, 0, 0);
 	private Vector3 _leftDirection = new Vector3(-1, 0, 0);
 
+	private float _corectionAngleForSnakeHead = 90f;
+
 	private void Start()
 	{
 		transform.position = new Vector3(0.5f, 0.5f, 0);
@@ -31,7 +33,7 @@ public class SnakeMoveScript : MonoBehaviour
 	private void Rotate()
 	{
 		float angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
-		transform.rotation = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
+		transform.rotation = Quaternion.AngleAxis(angle - _corectionAngleForSnakeHead, Vector3.forward);
 	}
 
 	private void CheckKeyDownState()
