@@ -12,14 +12,19 @@ public class BonusInteraction : MonoBehaviour
 	public delegate void IncreaseSpeedCallBack();
 	public static event IncreaseSpeedCallBack SpeedUp;
 
+	public delegate void ScoreCounterCallBack(int scrore);
+	public static event ScoreCounterCallBack IncreaseScoreUI;
+
 
 	[SerializeField] private GameObject _snakeBody = null;
 	private GameObject _bonusGO;
 	private bool _bonusPositionIsReached;
+	private int _bonusScoreCounter;
 
 	private void Awake()
 	{
 		_bonusGO = SpawnNewBonus?.Invoke();
+		_bonusScoreCounter = 0;
 	}
 
 	private void Update()
@@ -28,6 +33,8 @@ public class BonusInteraction : MonoBehaviour
 
 		if (_bonusPositionIsReached)
 		{
+			_bonusScoreCounter++;
+			IncreaseScoreUI?.Invoke(_bonusScoreCounter);
 			AddBodyPart?.Invoke();
 			ChooseInteractionVariant();
 			Destroy(_bonusGO.gameObject);

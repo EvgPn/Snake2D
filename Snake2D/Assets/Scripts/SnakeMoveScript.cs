@@ -4,6 +4,9 @@ using System.Collections;
 
 public class SnakeMoveScript : MonoBehaviour
 {
+	public delegate void SnakeLegthCallBack(int bodySize);
+	public static event SnakeLegthCallBack IncreaseLengthUI;
+
 	[SerializeField] private Vector3 _moveDirection = new Vector3(0, 0, 0);
 
 	private Vector3 _upDirection = new Vector3(0, 1, 0);
@@ -114,6 +117,7 @@ public class SnakeMoveScript : MonoBehaviour
 	private void IncreaseBodySize()
 	{
 		_snakeBodySize++;
+		IncreaseLengthUI?.Invoke(_snakeBodySize);
 	}
 
 	private void SpeedUp()
