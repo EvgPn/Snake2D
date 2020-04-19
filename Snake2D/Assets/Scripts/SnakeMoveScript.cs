@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Linq;
 
 public class SnakeMoveScript : MonoBehaviour
 {
@@ -22,6 +25,8 @@ public class SnakeMoveScript : MonoBehaviour
 	private int _snakeBodySize;
 	private List<Vector2> _snakeBodyPositions;
 	[SerializeField] private GameObject _bodyPrefab = null;
+
+	[SerializeField] private Text _scoreUI = null;
 
 	private void OnEnable()
 	{
@@ -58,12 +63,12 @@ public class SnakeMoveScript : MonoBehaviour
 		_timeToMove += Time.deltaTime;
 		if (_timeToMove >= _moveRate)
 		{
-			
+
 			_timeToMove = 0;
 			_snakeBodyPositions.Insert(0, _gridPosition);
 			transform.position += _moveDirection;
 			ControllSnakeLength();
-			
+
 		}
 	}
 
@@ -88,8 +93,9 @@ public class SnakeMoveScript : MonoBehaviour
 		{
 			if (_gridPosition == bodyPos)
 			{
-				Debug.Log("Game end");
-				Debug.Break();
+				PlayerPrefs.SetInt("Reached length", _snakeBodySize);
+				PlayerPrefs.SetInt("Reached score", int.Parse(_scoreUI.text));
+				SceneManager.LoadScene("GameEnd");
 			}
 		}
 	}

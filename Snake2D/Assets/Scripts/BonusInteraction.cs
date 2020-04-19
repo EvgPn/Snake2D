@@ -20,11 +20,11 @@ public class BonusInteraction : MonoBehaviour
 	private GameObject _bonusGO;
 	private bool _bonusPositionIsReached;
 	private int _bonusScoreCounter;
-
-	private void Awake()
+	
+	private void Start()
 	{
-		_bonusGO = SpawnNewBonus?.Invoke();
 		_bonusScoreCounter = 0;
+		_bonusGO = SpawnNewBonus?.Invoke();
 	}
 
 	private void Update()
@@ -32,13 +32,13 @@ public class BonusInteraction : MonoBehaviour
 		CheckSnakeAndBonusPosition();
 
 		if (_bonusPositionIsReached)
-		{
-			_bonusScoreCounter++;
-			IncreaseScoreUI?.Invoke(_bonusScoreCounter);
+		{			
 			AddBodyPart?.Invoke();
 			ChooseInteractionVariant();
 			Destroy(_bonusGO.gameObject);
 			_bonusGO = SpawnNewBonus?.Invoke();
+			_bonusScoreCounter++;
+			IncreaseScoreUI?.Invoke(_bonusScoreCounter);
 		}
 	}
 
