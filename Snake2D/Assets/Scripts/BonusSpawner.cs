@@ -23,7 +23,7 @@ public class BonusSpawner : MonoBehaviour
 	{
 		ChooseRandomPosition();
 		ChooseRandomBonus();
-		SpawnBonusGO();		
+		SpawnBonusGO();
 		return _bonusGO;
 	}
 
