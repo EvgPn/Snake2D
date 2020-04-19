@@ -6,5 +6,4 @@ public class Bonus : ScriptableObject
 {
 	public Sprite BonusIcon;
 	public string BonusName;
-	public int Value;
 }

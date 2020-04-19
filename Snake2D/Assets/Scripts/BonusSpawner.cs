@@ -2,8 +2,8 @@
 
 public class BonusSpawner : MonoBehaviour
 {
-	private int _maxSpawnPos = 8;
-	private int _minSpaawnPos = -8;
+	private int _maxSpawnPos = 14;
+	private int _minSpaawnPos = -14;
 
 	[SerializeField] private Bonus _slowTime = null;
 	[SerializeField] private Bonus _speedUp = null;
@@ -29,8 +29,8 @@ public class BonusSpawner : MonoBehaviour
 
 	private void ChooseRandomPosition()
 	{
-		_bonusPosition.x = Random.Range(_minSpaawnPos, _maxSpawnPos);
-		_bonusPosition.y = Random.Range(_minSpaawnPos, _maxSpawnPos);
+		_bonusPosition.x = Random.Range(_minSpaawnPos, _maxSpawnPos) + 0.5f;
+		_bonusPosition.y = Random.Range(_minSpaawnPos, _maxSpawnPos) + 0.5f;
 	}
 
 	private void ChooseRandomBonus()

@@ -1,86 +1,130 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 
 public class SnakeMoveScript : MonoBehaviour
 {
 	[SerializeField] private Vector3 _moveDirection = new Vector3(0, 0, 0);
-	[SerializeField] private float _moveSpeed = 0f;
 
 	private Vector3 _upDirection = new Vector3(0, 1, 0);
 	private Vector3 _downDirection = new Vector3(0, -1, 0);
 	private Vector3 _rightDirection = new Vector3(1, 0, 0);
 	private Vector3 _leftDirection = new Vector3(-1, 0, 0);
 
-	private float _corectionAngleForSnakeHead = 90f;
+	private Vector2 _gridPosition;
+
+	private float _timeToMove;
+	[SerializeField] private float _moveRate = 0.1f;
+
+	private int _snakeBodySize;
+	private List<Vector2> _snakeBodyPositions;
+	[SerializeField] private GameObject _bodyPrefab = null;
+
+	private void OnEnable()
+	{
+		BonusInteraction.AddBodyPart += IncreaseBodySize;
+		BonusInteraction.SpeedUp += SpeedUp;
+	}
 
 	private void Start()
 	{
-		transform.position = new Vector3(0.5f, 0.5f, 0);
+		transform.position = new Vector3(1f, 1f, 0);
+		_gridPosition = new Vector2(0.5f, 0.5f);
+		_snakeBodySize = 0;
+		_snakeBodyPositions = new List<Vector2>();
 	}
 
 	private void Update()
 	{
 		Move();
 		CheckKeyDownState();
-		Rotate();
+		CheckOnHeadCollisionWithBody();
 	}
 
 	private void Move()
 	{
-		transform.position += _moveDirection * _moveSpeed;
+		transform.position = new Vector3(_gridPosition.x, _gridPosition.y);
+		CheckMoveRate();
+
 		transform.position = Teleport.CheckCurrentPosition(transform.position);
+		_gridPosition = transform.position;
 	}
 
-	private void Rotate()
+	private void CheckMoveRate()
 	{
-		float angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
-		transform.rotation = Quaternion.AngleAxis(angle - _corectionAngleForSnakeHead, Vector3.forward);
+		_timeToMove += Time.deltaTime;
+		if (_timeToMove >= _moveRate)
+		{
+			
+			_timeToMove = 0;
+			_snakeBodyPositions.Insert(0, _gridPosition);
+			transform.position += _moveDirection;
+			ControllSnakeLength();
+			
+		}
+	}
+
+	private void ControllSnakeLength()
+	{
+		if (_snakeBodyPositions.Count >= _snakeBodySize + 1)
+		{
+			_snakeBodyPositions.RemoveAt(_snakeBodyPositions.Count - 1);
+		}
+
+		for (int i = 0; i < _snakeBodyPositions.Count; i++)
+		{
+			Vector2 snakeMovePosition = _snakeBodyPositions[i];
+			GameObject bodySprite = Instantiate(_bodyPrefab, snakeMovePosition, Quaternion.identity);
+			Destroy(bodySprite, _moveRate);
+		}
+	}
+
+	private void CheckOnHeadCollisionWithBody()
+	{
+		foreach (Vector2 bodyPos in _snakeBodyPositions)
+		{
+			if (_gridPosition == bodyPos)
+			{
+				Debug.Log("Game end");
+				Debug.Break();
+			}
+		}
 	}
 
 	private void CheckKeyDownState()
 	{
-		if (Input.GetKeyDown(KeyCode.UpArrow) && _moveDirection != _downDirection)
+		if (Input.GetKeyDown(KeyCode.UpArrow) && _moveDirection != _downDirection && _moveDirection != _upDirection)
 		{
-			RoundHorizontalPosition();
 			_moveDirection = _upDirection;
 		}
-		if (Input.GetKeyDown(KeyCode.DownArrow) && _moveDirection != _upDirection)
+		if (Input.GetKeyDown(KeyCode.DownArrow) && _moveDirection != _upDirection && _moveDirection != _downDirection)
 		{
-			RoundHorizontalPosition();
 			_moveDirection = _downDirection;
 		}
-		if (Input.GetKeyDown(KeyCode.RightArrow) && _moveDirection != _leftDirection)
+		if (Input.GetKeyDown(KeyCode.RightArrow) && _moveDirection != _leftDirection && _moveDirection != _rightDirection)
 		{
-			RoundVerticalDirection();
 			_moveDirection = _rightDirection;
 		}
-		if (Input.GetKeyDown(KeyCode.LeftArrow) && _moveDirection != _rightDirection)
+		if (Input.GetKeyDown(KeyCode.LeftArrow) && _moveDirection != _rightDirection && _moveDirection != _leftDirection)
 		{
-			RoundVerticalDirection();
 			_moveDirection = _leftDirection;
 		}
 	}
 
-	private void RoundHorizontalPosition()
+	private void IncreaseBodySize()
 	{
-		if (_moveDirection == _rightDirection)
-		{
-			transform.position = new Vector3(Mathf.Ceil(transform.position.x), transform.position.y);
-		}
-		if (_moveDirection == _leftDirection)
-		{
-			transform.position = new Vector3(Mathf.Floor(transform.position.x), transform.position.y);
-		}
+		_snakeBodySize++;
 	}
 
-	private void RoundVerticalDirection()
+	private void SpeedUp()
 	{
-		if (_moveDirection == _upDirection)
-		{
-			transform.position = new Vector3(transform.position.x, Mathf.Ceil(transform.position.y));
-		}
-		if (_moveDirection == _downDirection)
-		{
-			transform.position = new Vector3(transform.position.x, Mathf.Floor(transform.position.y));
-		}
+		_moveRate /= 2;
+		StartCoroutine(SlowSpeed());
+	}
+
+	private IEnumerator SlowSpeed()
+	{
+		yield return new WaitForSeconds(2);
+		_moveRate *= 2;
 	}
 }

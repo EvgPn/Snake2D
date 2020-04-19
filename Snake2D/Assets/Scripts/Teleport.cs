@@ -2,8 +2,8 @@
 
 public class Teleport : MonoBehaviour
 {
-	private static float _maxPositionValue = 9.5f;
-	private static float _minPositionValue = -9.5f;
+	private static float _maxPositionValue = 14.5f;
+	private static float _minPositionValue = -14.5f;
 
 	public static Vector3 CheckCurrentPosition(Vector3 position)
 	{
