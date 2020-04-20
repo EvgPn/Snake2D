@@ -19,6 +19,11 @@ public class BonusSpawner : MonoBehaviour
 		BonusInteraction.SpawnNewBonus += SpawnBonus;
 	}
 
+	private void OnDisable()
+	{
+		BonusInteraction.SpawnNewBonus -= SpawnBonus;
+	}
+
 	public GameObject SpawnBonus()
 	{
 		ChooseRandomPosition();

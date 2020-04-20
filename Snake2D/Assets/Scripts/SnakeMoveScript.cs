@@ -34,6 +34,12 @@ public class SnakeMoveScript : MonoBehaviour
 		BonusInteraction.SpeedUp += SpeedUp;
 	}
 
+	private void OnDisable()
+	{
+		BonusInteraction.AddBodyPart -= IncreaseBodySize;
+		BonusInteraction.SpeedUp -= SpeedUp;
+	}
+
 	private void Start()
 	{
 		transform.position = new Vector3(1f, 1f, 0);

@@ -15,6 +15,12 @@ public class HUDinfo : MonoBehaviour
 		BonusInteraction.IncreaseScoreUI += ScoreUI;
 	}
 
+	private void OnDisable()
+	{
+		SnakeMoveScript.IncreaseLengthUI -= SnakeLengthUI;
+		BonusInteraction.IncreaseScoreUI -= ScoreUI;
+	}
+
 	private void Start()
 	{
 		_playTimeCounter = 0.0f;

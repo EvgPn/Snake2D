@@ -23,7 +23,7 @@ public class BonusInteraction : MonoBehaviour
 
 	[SerializeField] private GameObject _pickUpVisualEffect = null;
 	[SerializeField] private AudioSource _pickUpAudioClip = null;
-	
+
 	private void Start()
 	{
 		_bonusScoreCounter = 0;
@@ -31,20 +31,20 @@ public class BonusInteraction : MonoBehaviour
 	}
 
 	private void Update()
-	{		
+	{
 		CheckSnakeAndBonusPosition();
 
 		if (_bonusPositionIsReached)
 		{
-			GameObject pickUpVFX = Instantiate(_pickUpVisualEffect, _bonusGO.transform.position, Quaternion.Euler(0,180,0));
+			_bonusScoreCounter++;
+			IncreaseScoreUI?.Invoke(_bonusScoreCounter);
+			GameObject pickUpVFX = Instantiate(_pickUpVisualEffect, _bonusGO.transform.position, Quaternion.Euler(0, 180, 0));
 			Destroy(pickUpVFX, 0.5f);
-			_pickUpAudioClip.Play();
-			AddBodyPart?.Invoke();
 			ChooseInteractionVariant();
 			Destroy(_bonusGO.gameObject);
 			_bonusGO = SpawnNewBonus?.Invoke();
-			_bonusScoreCounter++;
-			IncreaseScoreUI?.Invoke(_bonusScoreCounter);
+			_pickUpAudioClip.Play();
+			AddBodyPart?.Invoke();
 		}
 	}
 

@@ -32,11 +32,11 @@ public class EndMenu : MonoBehaviour
 
 	private void SetHigherScoreAndLenght()
 	{
-		if(_reachedScore > _maxScore)
+		if (_reachedScore > _maxScore)
 		{
 			PlayerPrefs.SetInt("Max score", _reachedScore);
 		}
-		if(_reachedLength > _maxLength)
+		if (_reachedLength > _maxLength)
 		{
 			PlayerPrefs.SetInt("Max length", _reachedLength);
 		}
