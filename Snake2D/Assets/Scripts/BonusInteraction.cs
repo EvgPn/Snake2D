@@ -6,14 +6,11 @@ public class BonusInteraction : MonoBehaviour
 	public delegate GameObject BonusSpawnerCallBack();
 	public static event BonusSpawnerCallBack SpawnNewBonus;
 
-	public delegate void IncreaseBodySizeCallBack();
-	public static event IncreaseBodySizeCallBack AddBodyPart;
-
-	public delegate void IncreaseSpeedCallBack();
-	public static event IncreaseSpeedCallBack SpeedUp;
-
 	public delegate void ScoreCounterCallBack(int scrore);
 	public static event ScoreCounterCallBack IncreaseScoreUI;
+
+	public delegate void IncreaseBodySizeCallBack();
+	public static event IncreaseBodySizeCallBack AddBodyPart;
 
 
 	[SerializeField] private GameObject _snakeBody = null;
@@ -24,8 +21,17 @@ public class BonusInteraction : MonoBehaviour
 	[SerializeField] private GameObject _pickUpVisualEffect = null;
 	[SerializeField] private AudioSource _pickUpAudioClip = null;
 
+
+	private SpeedUp _increaseSpeed;
+	private GrowUp _increaeLength;
+	private SlowTime _slowTime;
+
 	private void Start()
 	{
+		_increaseSpeed = new SpeedUp();
+		_increaeLength = new GrowUp();
+		_slowTime = new SlowTime();
+
 		_bonusScoreCounter = 0;
 		_bonusGO = SpawnNewBonus?.Invoke();
 	}
@@ -65,7 +71,7 @@ public class BonusInteraction : MonoBehaviour
 	{
 		if (_bonusGO.name == "GrowUp")
 		{
-			AddBodyPart?.Invoke();
+			_increaeLength.PickUp();
 		}
 		if (_bonusGO.name == "SlowTime")
 		{
@@ -74,7 +80,7 @@ public class BonusInteraction : MonoBehaviour
 		}
 		if (_bonusGO.name == "SpeedUp")
 		{
-			SpeedUp?.Invoke();
+			_increaseSpeed.PickUp();
 		}
 	}
 

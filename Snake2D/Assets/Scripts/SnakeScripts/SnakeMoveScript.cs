@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Linq;
 
 public class SnakeMoveScript : MonoBehaviour
 {
@@ -23,21 +22,26 @@ public class SnakeMoveScript : MonoBehaviour
 	[SerializeField] private float _moveRate = 0.1f;
 
 	private int _snakeBodySize;
-	private List<Vector2> _snakeBodyPositions;
+	private List<GameObject> _snakeBodyParts;
 	[SerializeField] private GameObject _bodyPrefab = null;
 
 	[SerializeField] private Text _scoreUI = null;
 
+	private Vector3 _previousBodyPartPos = new Vector3(0, 0, 0);
+	private Vector3 _currentBodyPartPos = new Vector3(0, 0, 0);
+
 	private void OnEnable()
 	{
 		BonusInteraction.AddBodyPart += IncreaseBodySize;
-		BonusInteraction.SpeedUp += SpeedUp;
+		GrowUp.AddBodyPart += IncreaseBodySize;
+		SpeedUp.SpeedUpEvent += IncreaseSpeed;
 	}
 
 	private void OnDisable()
 	{
 		BonusInteraction.AddBodyPart -= IncreaseBodySize;
-		BonusInteraction.SpeedUp -= SpeedUp;
+		GrowUp.AddBodyPart -= IncreaseBodySize;
+		SpeedUp.SpeedUpEvent -= IncreaseSpeed;
 	}
 
 	private void Start()
@@ -45,7 +49,7 @@ public class SnakeMoveScript : MonoBehaviour
 		transform.position = new Vector3(1f, 1f, 0);
 		_gridPosition = new Vector2(0.5f, 0.5f);
 		_snakeBodySize = 0;
-		_snakeBodyPositions = new List<Vector2>();
+		_snakeBodyParts = new List<GameObject>();
 	}
 
 	private void Update()
@@ -69,35 +73,28 @@ public class SnakeMoveScript : MonoBehaviour
 		_timeToMove += Time.deltaTime;
 		if (_timeToMove >= _moveRate)
 		{
-
 			_timeToMove = 0;
-			_snakeBodyPositions.Insert(0, _gridPosition);
+			_previousBodyPartPos = transform.position;
 			transform.position += _moveDirection;
-			ControllSnakeLength();
-
+			MoveSnakeBodyParts();
 		}
 	}
 
-	private void ControllSnakeLength()
+	private void MoveSnakeBodyParts()
 	{
-		if (_snakeBodyPositions.Count >= _snakeBodySize + 1)
+		foreach (GameObject objectPos in _snakeBodyParts)
 		{
-			_snakeBodyPositions.RemoveAt(_snakeBodyPositions.Count - 1);
-		}
-
-		for (int i = 0; i < _snakeBodyPositions.Count; i++)
-		{
-			Vector2 snakeMovePosition = _snakeBodyPositions[i];
-			GameObject bodySprite = Instantiate(_bodyPrefab, snakeMovePosition, Quaternion.identity);
-			Destroy(bodySprite, _moveRate);
+			_currentBodyPartPos = objectPos.transform.position;
+			objectPos.transform.position = _previousBodyPartPos;
+			_previousBodyPartPos = _currentBodyPartPos;
 		}
 	}
 
 	private void CheckOnHeadCollisionWithBody()
 	{
-		foreach (Vector2 bodyPos in _snakeBodyPositions)
+		foreach (GameObject bodyPos in _snakeBodyParts)
 		{
-			if (_gridPosition == bodyPos)
+			if (_gridPosition.x == bodyPos.transform.position.x && _gridPosition.y == bodyPos.transform.position.y)
 			{
 				PlayerPrefs.SetInt("Reached length", _snakeBodySize);
 				PlayerPrefs.SetInt("Reached score", int.Parse(_scoreUI.text));
@@ -129,10 +126,13 @@ public class SnakeMoveScript : MonoBehaviour
 	private void IncreaseBodySize()
 	{
 		_snakeBodySize++;
+		GameObject bodySprite = Instantiate(_bodyPrefab);
+		bodySprite.transform.position = _currentBodyPartPos;
+		_snakeBodyParts.Add(bodySprite);
 		IncreaseLengthUI?.Invoke(_snakeBodySize);
 	}
 
-	private void SpeedUp()
+	private void IncreaseSpeed()
 	{
 		_moveRate /= 2;
 		StartCoroutine(SlowSpeed());
