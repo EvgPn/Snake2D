@@ -28,9 +28,9 @@ public class BonusInteraction : MonoBehaviour
 
 	private void Start()
 	{
-		_increaseSpeed = new SpeedUp();
-		_increaeLength = new GrowUp();
-		_slowTime = new SlowTime();
+		_increaseSpeed = gameObject.AddComponent<SpeedUp>();
+		_increaeLength = gameObject.AddComponent<GrowUp>();
+		_slowTime = gameObject.AddComponent<SlowTime>();
 
 		_bonusScoreCounter = 0;
 		_bonusGO = SpawnNewBonus?.Invoke();
@@ -75,18 +75,11 @@ public class BonusInteraction : MonoBehaviour
 		}
 		if (_bonusGO.name == "SlowTime")
 		{
-			Time.timeScale = 0.5f;
-			StartCoroutine(IncreaseTimeScale());
+			_slowTime.PickUp();
 		}
 		if (_bonusGO.name == "SpeedUp")
 		{
 			_increaseSpeed.PickUp();
 		}
-	}
-
-	private IEnumerator IncreaseTimeScale()
-	{
-		yield return new WaitForSeconds(2);
-		Time.timeScale = 1f;
 	}
 }

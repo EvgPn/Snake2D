@@ -6,7 +6,7 @@ public class SlowTime : BaseBonus
 	public override void PickUp()
 	{
 		Time.timeScale = 0.5f;
-		StartCoroutine(IncreaseTimeScale());
+		StartCoroutine("IncreaseTimeScale");
 	}
 
 	private IEnumerator IncreaseTimeScale()
