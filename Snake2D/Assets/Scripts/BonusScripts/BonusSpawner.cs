@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class BonusSpawner : MonoBehaviour
 {
+	public static BaseBonus _bonus;
+	private Bonus _bonusToSpawn;
+
+	[SerializeField] private List<Bonus> _bonusList = new List<Bonus>();
+	[SerializeField] private List<BaseBonus> _bonusProperties = new List<BaseBonus>();
+
 	private int _maxSpawnPos = 14;
 	private int _minSpaawnPos = -14;
 
-	[SerializeField] private Bonus _slowTime = null;
-	[SerializeField] private Bonus _speedUp = null;
-	[SerializeField] private Bonus _growUp = null;
-
 	private Vector3 _bonusPosition;
-
-	private Bonus _bonusToSpawn;
 	private GameObject _bonusGO;
 
 	private void OnEnable()
@@ -40,19 +41,10 @@ public class BonusSpawner : MonoBehaviour
 
 	private void ChooseRandomBonus()
 	{
-		int bonusNum = Random.Range(1, 4);
-		switch (bonusNum)
-		{
-			case 1:
-				_bonusToSpawn = _slowTime;
-				break;
-			case 2:
-				_bonusToSpawn = _speedUp;
-				break;
-			case 3:
-				_bonusToSpawn = _growUp;
-				break;
-		}
+		System.Random rand = new System.Random();
+		int indexOfRandomElement = rand.Next(_bonusList.Count);
+		_bonusToSpawn = _bonusList[indexOfRandomElement];
+		_bonus = _bonusProperties[indexOfRandomElement];
 	}
 
 	private void SpawnBonusGO()

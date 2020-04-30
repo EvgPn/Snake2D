@@ -21,17 +21,8 @@ public class BonusInteraction : MonoBehaviour
 	[SerializeField] private GameObject _pickUpVisualEffect = null;
 	[SerializeField] private AudioSource _pickUpAudioClip = null;
 
-
-	private SpeedUp _increaseSpeed;
-	private GrowUp _increaeLength;
-	private SlowTime _slowTime;
-
 	private void Start()
 	{
-		_increaseSpeed = gameObject.AddComponent<SpeedUp>();
-		_increaeLength = gameObject.AddComponent<GrowUp>();
-		_slowTime = gameObject.AddComponent<SlowTime>();
-
 		_bonusScoreCounter = 0;
 		_bonusGO = SpawnNewBonus?.Invoke();
 	}
@@ -44,13 +35,17 @@ public class BonusInteraction : MonoBehaviour
 		{
 			_bonusScoreCounter++;
 			IncreaseScoreUI?.Invoke(_bonusScoreCounter);
+
 			GameObject pickUpVFX = Instantiate(_pickUpVisualEffect, _bonusGO.transform.position, Quaternion.Euler(0, 180, 0));
 			Destroy(pickUpVFX, 0.5f);
-			ChooseInteractionVariant();
+			_pickUpAudioClip.Play();
+
+			AddBodyPart?.Invoke();
+
+			BonusSpawner._bonus.PickUp();
+
 			Destroy(_bonusGO.gameObject);
 			_bonusGO = SpawnNewBonus?.Invoke();
-			_pickUpAudioClip.Play();
-			AddBodyPart?.Invoke();
 		}
 	}
 
@@ -64,22 +59,6 @@ public class BonusInteraction : MonoBehaviour
 		else
 		{
 			_bonusPositionIsReached = false;
-		}
-	}
-
-	private void ChooseInteractionVariant()
-	{
-		if (_bonusGO.name == "GrowUp")
-		{
-			_increaeLength.PickUp();
-		}
-		if (_bonusGO.name == "SlowTime")
-		{
-			_slowTime.PickUp();
-		}
-		if (_bonusGO.name == "SpeedUp")
-		{
-			_increaseSpeed.PickUp();
 		}
 	}
 }
